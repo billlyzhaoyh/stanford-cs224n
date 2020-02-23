@@ -94,9 +94,9 @@ class CharDecoder(nn.Module):
         ###        Their indices are self.target_vocab.start_of_word and self.target_vocab.end_of_word, respectively.
         initial_hidden,initial_cell=initialStates
         _,batch_size,_=initial_hidden.shape
-        output_words=torch.zeros([batch_size,max_length])
+        output_words=torch.zeros([batch_size,max_length],device=device)
         current_characters=[self.target_vocab.char2id['{']]*batch_size
-        current_characters_tensor=torch.tensor(current_characters).unsqueeze(0)
+        current_characters_tensor=torch.tensor(current_characters,device=device).unsqueeze(0)
         softmax=nn.Softmax(dim=2)
         for i in range(max_length):
             scores,interStates=self.forward(current_characters_tensor,initialStates)
