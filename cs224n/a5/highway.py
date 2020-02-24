@@ -22,7 +22,7 @@ class Highway(nn.Module):
     	#initialise b_gate to be positive to encourage gate opening
 
 
-    def forward(self,x_conv_out):
+    def forward(self,x_conv_out: torch.Tensor):
     	"""
     	@param x_conv_out (tensor[sentence_length, batch_size, word_embedding_dim]): input character embeddings after 1d convolution and max pooling
         @param x_highway (tensor[sentence_length, batch_size, word_embedding_dim]): output after the highway module, should have the same dimension as the input

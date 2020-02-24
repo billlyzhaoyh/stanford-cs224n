@@ -59,16 +59,13 @@ class CharDecoder(nn.Module):
         ###       - char_sequence corresponds to the sequence x_1 ... x_{n+1} (e.g., <START>,m,u,s,i,c,<END>). Read the handout about how to construct input and target sequence of CharDecoderLSTM.
         ###       - Carefully read the documentation for nn.CrossEntropyLoss and our handout to see what this criterion have already included:
         ###             https://pytorch.org/docs/stable/nn.html#crossentropyloss
-        criterion=nn.CrossEntropyLoss(reduction='none')
-        length,batch_size=char_sequence.shape
-        input_sequence=char_sequence[:length-1,:]
+        criterion=nn.CrossEntropyLoss(ignore_index=self.target_vocab.char2id['<pad>'], reduction='sum')
+        input_sequence=char_sequence[:-1,:]
+        length,batch_size=input_sequence.shape
         target_sequence=char_sequence[1:,:]
         scores,dec_hidden=self.forward(input_sequence,dec_hidden)
-        #create a mask based on target_sequence
-        mask=(target_sequence.view(-1)==0)
-        loss=criterion(scores.view((length-1)*batch_size,-1), target_sequence.view(-1))
-        loss[mask]=0
-        return torch.sum(loss)
+        loss=criterion(scores.view(length*batch_size,-1), target_sequence.contiguous().view(-1))
+        return loss
 
 
         ### END YOUR CODE

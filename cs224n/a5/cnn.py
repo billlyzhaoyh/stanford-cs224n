@@ -7,14 +7,15 @@ CS224N 2019-20: Homework 5
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class CNN(nn.Module):
     
     # Remember to delete the above 'pass' after your implementation
     ### YOUR CODE HERE for part 1g
-    def __init__(self,char_embedding_dim,word_embedding_dim):
+    def __init__(self,char_embedding_dim,word_embedding_dim,kernel_size=5):
     	super(CNN,self).__init__()
-    	self.con1d=torch.nn.Conv1d(char_embedding_dim, word_embedding_dim, 5, padding=1)
+    	self.con1d=torch.nn.Conv1d(char_embedding_dim, word_embedding_dim, kernel_size, padding=1)
     	self.maxpool=torch.nn.AdaptiveMaxPool1d(1)
 
 
@@ -26,7 +27,7 @@ class CNN(nn.Module):
     	"""
     	sentence_length, batch_size, char_embedding_dim, max_word_length=x_reshaped.shape
     	x_conv=self.con1d(x_reshaped.view(-1,char_embedding_dim,max_word_length))
-    	x_conv_out=self.maxpool(x_conv).squeeze()
+    	x_conv_out=self.maxpool(F.relu(x_conv)).squeeze()
     	return x_conv_out.view(sentence_length,batch_size,-1)
 
 
